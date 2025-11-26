@@ -161,6 +161,7 @@ router.get('/setup-2fa', isAuthenticated, async (req, res) => {
     if (user.two_fa_enabled) {
       return res.render('dashboard', { 
         username: user.username,
+        email: user.email,
         twoFAEnabled: true,
         message: 'Ya tiene 2FA habilitado'
       });
@@ -183,8 +184,11 @@ router.get('/setup-2fa', isAuthenticated, async (req, res) => {
     });
   } catch (error) {
     console.error('Error al configurar 2FA:', error);
+    const user = await getUserById(req.session.userId);
     res.render('dashboard', { 
-      username: req.session.username,
+      username: user.username,
+      email: user.email,
+      twoFAEnabled: user.two_fa_enabled,
       message: 'Error al configurar 2FA'
     });
   }
@@ -227,15 +231,20 @@ router.post('/confirm-2fa', isAuthenticated, async (req, res) => {
       [secret, req.session.userId]
     );
 
+    const user = await getUserById(req.session.userId);
     res.render('dashboard', {
-      username: req.session.username,
+      username: user.username,
+      email: user.email,
       twoFAEnabled: true,
       message: '✓ 2FA habilitado correctamente'
     });
   } catch (error) {
     console.error('Error al confirmar 2FA:', error);
+    const user = await getUserById(req.session.userId);
     res.render('dashboard', { 
-      username: req.session.username,
+      username: user.username,
+      email: user.email,
+      twoFAEnabled: user.two_fa_enabled,
       message: 'Error al guardar la configuración de 2FA'
     });
   } finally {
@@ -293,6 +302,8 @@ router.get('/dashboard', isAuthenticated, async (req, res) => {
     console.error('Error al obtener dashboard:', error);
     res.render('dashboard', { 
       username: req.session.username,
+      email: null,
+      twoFAEnabled: false,
       message: 'Error al cargar el dashboard'
     });
   }
@@ -318,6 +329,8 @@ router.get('/disable-2fa', isAuthenticated, async (req, res) => {
     console.error('Error al deshabilitar 2FA:', error);
     res.render('dashboard', { 
       username: req.session.username,
+      email: null,
+      twoFAEnabled: false,
       message: 'Error al deshabilitar 2FA'
     });
   } finally {
