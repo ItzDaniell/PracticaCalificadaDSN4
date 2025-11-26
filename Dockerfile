@@ -1,34 +1,26 @@
-# Etapa 1: Construcción
 FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copiar archivos de dependencias
 COPY package*.json ./
 
-# Instalar dependencias
 RUN npm ci --only=production
 
-# Etapa 2: Runtime
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Copiar las dependencias instaladas desde la etapa anterior
-COPY --from=builder /app/node_modules ./node_modules
+RUN apk add --no-cache wget
 
-# Copiar el resto de la aplicación
+COPY --from=builder /app/node_modules ./node_modules
 COPY . .
 
-# Crear archivo .env si no existe
-RUN if [ ! -f .env ]; then cp .env.example .env; fi
-
-# Exponer puerto 3000
 EXPOSE 3000
 
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+ENV PORT=3000
+ENV NODE_ENV=production
 
-# Comando de inicio
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:${PORT} || exit 1
+
 CMD ["npm", "start"]

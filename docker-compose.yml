@@ -1,16 +1,15 @@
 version: '3.8'
 
 services:
-  # Base de datos MySQL
   db:
     image: mysql:8.0
     container_name: 2fa-auth-db
     environment:
-      MYSQL_ROOT_PASSWORD: root123
-      MYSQL_DATABASE: auth_db
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
       MYSQL_ROOT_HOST: '%'
     ports:
-      - "3306:3306"
+      - "${DB_PORT}:3306"
     volumes:
       - db-data:/var/lib/mysql
     networks:
@@ -22,22 +21,22 @@ services:
       interval: 10s
     restart: unless-stopped
 
-  # Aplicación Express
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: 2fa-auth-app
     ports:
-      - "3000:3000"
+      - "${PORT}:3000"
     environment:
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: root123
-      DB_NAME: auth_db
-      SESSION_SECRET: tu_secret_key_segura
-      NODE_ENV: production
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      SESSION_SECRET: ${SESSION_SECRET}
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
     depends_on:
       db:
         condition: service_healthy
@@ -52,7 +51,6 @@ services:
 
 volumes:
   db-data:
-    driver: local
 
 networks:
   2fa-network:
