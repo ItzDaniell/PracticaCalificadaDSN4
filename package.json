@@ -1,0 +1,39 @@
+{
+  "name": "2fa-auth-app",
+  "version": "1.0.0",
+  "description": "Aplicación con autenticación de 2 pasos usando Express, MySQL y Google Authenticator",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "css": "tailwindcss -i ./public/styles.css -o ./public/output.css",
+    "css:watch": "tailwindcss -i ./public/styles.css -o ./public/output.css --watch"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "express-validator": "^7.0.0",
+    "mysql2": "^3.6.0",
+    "qrcode": "^1.5.3",
+    "speakeasy": "^2.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.22",
+    "nodemon": "^3.0.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17"
+  },
+  "keywords": [
+    "express",
+    "authentication",
+    "2fa",
+    "mysql"
+  ],
+  "author": "",
+  "license": "ISC"
+}
