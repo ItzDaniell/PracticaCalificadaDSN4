@@ -1,0 +1,96 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Instancia EC2 Ubuntu 20.04 con puerto 3000 habilitado.",
+  "Parameters": {
+    "KeyName": {
+      "Description": "Nombre del KeyPair existente.",
+      "Type": "AWS::EC2::KeyPair::KeyName"
+    },
+    "VpcId": {
+      "Description": "ID de la VPC.",
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "SubnetId": {
+      "Description": "ID de la Subnet.",
+      "Type": "AWS::EC2::Subnet::Id"
+    },
+    "LatestAmiId": {
+      "Description": "Última AMI Ubuntu 20.04 desde SSM.",
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+      "Default": "/aws/service/canonical/ubuntu/server/focal/stable/current/amd64/hvm/ebs-gp2/ami-id"
+    }
+  },
+  "Resources": {
+    "InstanceSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Permite SSH (22) y puerto 3000",
+        "VpcId": {
+          "Ref": "VpcId"
+        },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 3000,
+            "ToPort": 3000,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "UbuntuInstance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "InstanceType": "t2.micro",
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "ImageId": {
+          "Ref": "LatestAmiId"
+        },
+        "SubnetId": {
+          "Ref": "SubnetId"
+        },
+        "SecurityGroupIds": [
+          {
+            "Ref": "InstanceSecurityGroup"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Ubuntu-20-Instance"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Sub": "#!/bin/bash\napt update -y\napt install -y nodejs npm\nnpm install -g http-server\nmkdir /home/ubuntu/app\necho \"<h1>Servidor activo en puerto 3000 🚀</h1>\" > /home/ubuntu/app/index.html\ncd /home/ubuntu/app\nnohup http-server -p 3000 &"
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "InstanceId": {
+      "Description": "ID de la instancia Ubuntu",
+      "Value": {
+        "Ref": "UbuntuInstance"
+      }
+    },
+    "PublicIP": {
+      "Description": "IP pública de la instancia",
+      "Value": {
+        "Fn::GetAtt": [
+          "UbuntuInstance",
+          "PublicIp"
+        ]
+      }
+    }
+  }
+}
