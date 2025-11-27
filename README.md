@@ -1,15 +1,15 @@
-# 🔐 Aplicación de Autenticación 2FA
+# Aplicación de Autenticación 2FA
 
 Aplicación web con autenticación de dos factores (2FA) usando Express.js, MySQL y Google Authenticator.
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
 Asegúrate de tener instalados los siguientes componentes en tu sistema:
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (incluye Docker Compose)
 - [Git](https://git-scm.com/downloads)
 
-## 🚀 Instalación y Ejecución con Docker Compose
+## Instalación y Ejecución con Docker Compose
 
 Sigue estos pasos para desplegar la aplicación en tu entorno local:
 
@@ -73,7 +73,7 @@ Abre tu navegador web y visita:
 
 [http://localhost:3000](http://localhost:3000)
 
-## 🛑 Detener la aplicación
+## Detener la aplicación
 
 Para detener y eliminar los contenedores:
 
@@ -87,7 +87,7 @@ Si deseas detenerlos y también eliminar los volúmenes de datos (borrar la base
 docker-compose down -v
 ```
 
-## 🔍 Solución de problemas comunes
+## Solución de problemas comunes
 
 - **Puerto ocupado**: Si el puerto 3000 o 3306 están ocupados, puedes cambiarlos en el archivo `docker-compose.yml` y en el `.env`.
 - **Error de conexión a BD**: El contenedor de la aplicación espera a que la base de datos esté lista, pero si falla al inicio, intenta reiniciar el contenedor de la app: `docker-compose restart app`.
@@ -96,6 +96,6 @@ docker-compose down -v
   docker-compose logs -f
   ```
 
-## 👤 Autor
+## Autor
 
 Desarrollado como práctica calificada para el curso de Desarrollo de Soluciones en la Nube.
